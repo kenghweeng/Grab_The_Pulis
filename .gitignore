@@ -1,3 +1,5 @@
-.ipynb
-.pdf
+.ipynb_checkpoints/
+*.ipynb
+*.pdf
+*.png
 data/
