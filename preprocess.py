@@ -1,4 +1,10 @@
 import pandas as pd
+from datetime import datetime
+
+def ios_bearing_check(df):
+    df = df.groupby(((df["bearing"] != df["bearing"].shift()) | (df["bearing"] != 180)).cumsum()).agg({'trj_id':'first','driving_mode':'first','pingtimestamp':'first', 'rawlat':'first', 'rawlng':'first', 'speed': lambda x: sum(x)/len(x), 'bearing':'first', 'accuracy':'first'})
+    df.reset_index(drop=True, inplace=True)
+    return df
 
 def preprocess(df):
     # Filter out invalid accuracy
@@ -12,13 +18,32 @@ def preprocess(df):
 
     # Filter out invalid bearing (ios)
     ## Remove consecutive rows with bearing 180 and take average of the speed of these rows
-    df.sort_values(["trj_id", "pingtimestamp"], inplace=True)
+    df_ios = df[df.osname == "ios"]
+    df_android = df[df.osname == "android"]
+    
+    suspects = list(set(df_ios.loc[df_ios.index[df_ios['bearing'] == 180]].trj_id))
+    df_ios = df_ios[df_ios.trj_id.isin(suspects)]
+    df_ios = df_ios.sort_values(["trj_id", "pingtimestamp"])
 
-    df = df.groupby(((df["bearing"] != df["bearing"].shift()) | (df["bearing"] != 180)).cumsum()).agg({'trj_id':'first','driving_mode':'first','osname':'first', 'pingtimestamp':'first', 'rawlat':'first', 'rawlng':'first', 'speed': lambda x: sum(x)/len(x), 'bearing':'first', 'accuracy':'first', 'time':'first', 'day_of_week':'first', 'month':'first', 'year':'first'})
 
-    df.reset_index(drop=True, inplace=True)
+    all_dfs = [df_ios[df_ios.trj_id == i] for i in suspects]
 
-    # Convert Unix Time to TimeStamp
+    # Check individual df
+    all_dfs = list(map(lambda x: ios_bearing_check(x), all_dfs))
+
+    # Combine back to ios
+    df_ios = pd.concat(all_dfs)
+
+    # Add back columns
+    df_ios['osname'] = 'ios'
+    dt = df_ios["pingtimestamp"].apply(datetime.fromtimestamp)
+    df_ios["time"] = dt.apply(lambda x: x.time())
+    df_ios["day_of_week"] = dt.apply(lambda x: x.weekday())
+    df_ios["month"] = dt.apply(lambda x: x.month)
+    df_ios["year"] = dt.apply(lambda x: x.year)
+
+    # Combine back ios and android
+    df = pd.concat([df_ios, df_android])
     dt = df["pingtimestamp"].apply(datetime.fromtimestamp)
     
     # Add new Day column to dataframe
