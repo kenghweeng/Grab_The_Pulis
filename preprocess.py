@@ -4,11 +4,12 @@ from tqdm import tqdm
 
 tqdm.pandas()
 
-def group_zero(group):
-    return 0.0
+def make_zero(element, val):
+    return 0.0 if val == 180 else val
 
 def ios_bearing_check(df):
-    df = df.groupby(((df["bearing"] != df["bearing"].shift()) | (df["bearing"] != 180)).cumsum()).agg({'trj_id':'first','driving_mode':'first','pingtimestamp':'first', 'rawlat':'first', 'rawlng':'first', 'speed': group_zero, 'bearing':'first', 'accuracy':'first'})
+    df['speed'] = df['bearing'].apply(make_zero,val=180)
+    # df = df.groupby(((df["bearing"] != df["bearing"].shift()) | (df["bearing"] != 180)).cumsum()).agg({'trj_id':'first','driving_mode':'first','pingtimestamp':'first', 'rawlat':'first', 'rawlng':'first', 'speed': group_zero, 'bearing':'first', 'accuracy':'first'})
     df.reset_index(drop=True, inplace=True)
     return df
 
