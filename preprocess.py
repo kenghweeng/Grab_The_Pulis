@@ -10,6 +10,9 @@ def preprocess(df):
     # Filter out invalid accuracy
     df = df[df.accuracy > 0]
 
+    # Limit accuracy <= 1000
+    df = df[df.accuracy <= 1000]
+
     # Filter out negative speed
     df = df[df.speed >= 0]
 
