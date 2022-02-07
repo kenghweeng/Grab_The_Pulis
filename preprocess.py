@@ -22,9 +22,9 @@ def preprocess(df):
     df_android = df[df.osname == "android"]
     
     suspects = list(set(df_ios.loc[df_ios.index[df_ios['bearing'] == 180]].trj_id))
+    df_ios_norm = df_ios[~df_ios.trj_id.isin(suspects)]
     df_ios = df_ios[df_ios.trj_id.isin(suspects)]
     df_ios = df_ios.sort_values(["trj_id", "pingtimestamp"])
-
 
     all_dfs = [df_ios[df_ios.trj_id == i] for i in suspects]
 
@@ -43,7 +43,7 @@ def preprocess(df):
     df_ios["year"] = dt.apply(lambda x: x.year)
 
     # Combine back ios and android
-    df = pd.concat([df_ios, df_android])
+    df = pd.concat([df_ios, df_ios_norm, df_android])
     dt = df["pingtimestamp"].apply(datetime.fromtimestamp)
     
     # Add new Day column to dataframe
