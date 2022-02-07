@@ -2,7 +2,7 @@ import pandas as pd
 from datetime import datetime
 
 def ios_bearing_check(df):
-    df = df.groupby(((df["bearing"] != df["bearing"].shift()) | (df["bearing"] != 180)).cumsum()).agg({'trj_id':'first','driving_mode':'first','pingtimestamp':'first', 'rawlat':'first', 'rawlng':'first', 'speed': lambda x: sum(x)/len(x), 'bearing':'first', 'accuracy':'first'})
+    df = df.groupby(((df["bearing"] != df["bearing"].shift()) | (df["bearing"] != 180)).cumsum()).agg({'trj_id':'first','driving_mode':'first','pingtimestamp':'first', 'rawlat':'first', 'rawlng':'first', 'speed': 0.0, 'bearing':'first', 'accuracy':'first'})
     df.reset_index(drop=True, inplace=True)
     return df
 
