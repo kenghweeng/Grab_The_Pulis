@@ -1,8 +1,14 @@
 import pandas as pd
 from datetime import datetime
+from tqdm import tqdm
+
+tqdm.pandas()
+
+def group_zero(group):
+    return 0.0
 
 def ios_bearing_check(df):
-    df = df.groupby(((df["bearing"] != df["bearing"].shift()) | (df["bearing"] != 180)).cumsum()).agg({'trj_id':'first','driving_mode':'first','pingtimestamp':'first', 'rawlat':'first', 'rawlng':'first', 'speed': 0.0, 'bearing':'first', 'accuracy':'first'})
+    df = df.groupby(((df["bearing"] != df["bearing"].shift()) | (df["bearing"] != 180)).cumsum()).agg({'trj_id':'first','driving_mode':'first','pingtimestamp':'first', 'rawlat':'first', 'rawlng':'first', 'speed': group_zero, 'bearing':'first', 'accuracy':'first'})
     df.reset_index(drop=True, inplace=True)
     return df
 
@@ -47,37 +53,37 @@ def preprocess(df):
     all_dfs = [df_ios[df_ios.trj_id == i] for i in suspects]
 
     # Check individual df
-    all_dfs = list(map(lambda x: ios_bearing_check(x), all_dfs))
+    all_dfs = list(map(lambda x: ios_bearing_check(x), tqdm(all_dfs)))
 
     # Combine back to ios
     df_ios = pd.concat(all_dfs)
 
     # Add back columns
     df_ios['osname'] = 'ios'
-    dt = df_ios["pingtimestamp"].apply(datetime.fromtimestamp)
-    df_ios["time"] = dt.apply(lambda x: x.time())
-    df_ios["day_of_week"] = dt.apply(lambda x: x.weekday())
-    df_ios["month"] = dt.apply(lambda x: x.month)
-    df_ios["year"] = dt.apply(lambda x: x.year)
+    dt = df_ios["pingtimestamp"].progress_apply(datetime.fromtimestamp)
+    df_ios["time"] = dt.progress_apply(lambda x: x.time())
+    df_ios["day_of_week"] = dt.progress_apply(lambda x: x.weekday())
+    df_ios["month"] = dt.progress_apply(lambda x: x.month)
+    df_ios["year"] = dt.progress_apply(lambda x: x.year)
 
     # Combine back ios and android
     df = pd.concat([df_ios, df_ios_norm, df_android])
-    dt = df["pingtimestamp"].apply(datetime.fromtimestamp)
+    dt = df["pingtimestamp"].progress_apply(datetime.fromtimestamp)
     
     # Add new Day column to dataframe
-    df.insert(10,"day", dt.apply(lambda x: x.day))
+    df.insert(10,"day", dt.progress_apply(lambda x: x.day))
     df["day"] = df["day"].astype("uint16")
 
     # Shift Day of Week to last column
     df.insert(len(df.columns)-1, "day_of_week", df.pop("day_of_week"))
 
     # Drop extra index column
-    df = df.drop("index", axis=1)
+    # df = df.drop("index", axis=1)
 
     # Convert type
     df = type_convert(df)
 
     # Reset Index
-    df = df.reset_index()
+    df.reset_index(drop=True, inplace=True)
     
     return df
