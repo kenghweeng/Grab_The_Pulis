@@ -6,6 +6,21 @@ def ios_bearing_check(df):
     df.reset_index(drop=True, inplace=True)
     return df
 
+def type_convert(df):
+    df['trj_id'] = df['trj_id'].astype('category')
+    df['driving_mode'] = df['driving_mode'].astype('category')
+    df['osname'] = df['osname'].astype('category')
+    df['pingtimestamp'] = df['pingtimestamp'].astype('int32')
+    df['rawlat'] = df['rawlat'].astype('float32')
+    df['rawlng'] = df['rawlng'].astype('float32')
+    df['speed'] = df['speed'].astype('float32')
+    df['bearing'] = df['bearing'].astype('int32')
+    df['accuracy'] = df['accuracy'].astype('float32')
+    df['month'] = df['month'].astype('uint16')
+    df['year'] = df['year'].astype('int32')
+    df['day_of_week'] = df['day_of_week'].astype('uint16')
+    return df
+
 def preprocess(df):
     # Filter out invalid accuracy
     df = df[df.accuracy > 0]
@@ -56,4 +71,13 @@ def preprocess(df):
     # Shift Day of Week to last column
     df.insert(len(df.columns)-1, "day_of_week", df.pop("day_of_week"))
 
+    # Drop extra index column
+    df = df.drop("index", axis=1)
+
+    # Convert type
+    df = type_convert(df)
+
+    # Reset Index
+    df = df.reset_index()
+    
     return df
