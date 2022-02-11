@@ -16,8 +16,8 @@ We've shortlisted the reasons to be:
 * Drivers picking inefficient routes, as we compare the actual driver routes taken with popular Google Maps and Open Street Map routes which we pulled using Google Maps API and `osmnx`. We found out that drivers's supposed "shortcuts" are more often slower, albeit, there were in-fact expert-curated routes which were actually even faster than Google Maps and Open Street Maps. These insights could be used to augment Grab-Nav!
 
 Team:
-* Keng Hwee [Lead] @kenghweeng
-* Russell Saerang @RussellDash332
-* Sean Gee Zhing @pikasean
-* Terry Lim @terrylimxc
-* Jonathan Chen @cysjonathan
+* Keng Hwee [Lead @kenghweeng](https://github.com/kenghweeng)
+* Russell Saerang [@RussellDash332](https://github.com/RussellDash332)
+* Sean Gee Zhing [@pikasean](https://github.com/pikasean)
+* Terry Lim [@terrylimxc](https://github.com/terrylimxc)
+* Jonathan Chen [@cysjonathan](https://github.com/cysjonathan)
