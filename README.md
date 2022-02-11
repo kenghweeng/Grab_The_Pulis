@@ -2,14 +2,12 @@
 
 Detailed analysis done to investigate possible reasons for delay in Grab services for NUS Data Analytics Competition 2022, to be found in [here](https://github.com/kenghweeng/Grab_The_Pulis/blob/main/final.ipynb) and [here](https://github.com/kenghweeng/Grab_The_Pulis/blob/main/Analyze_Jakarta_Routes.ipynb).
 
-<p>
 Our main tech-stack:
 * Vahalla, a C++ implementation for map matching.
 * ipyleaflet, for very interactive visualizations of geospatial data analysis
 * geopandas
 * Dask
 * matplotlib & seaborn
-</p>
 
 We've shortlisted the reasons to be:
 * Traffic bottlenecks at popular shopping malls due to narrow infrastructures of pickup points. We comparatively found out that pickup speeds at Changi Airport with optimized pick-up and drop-off pioints are much faster at the initial and end-timings of each trip, compared to popular shopping malls with narrow queues at their pick-up and drop-off locations. <br>
