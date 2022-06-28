@@ -20,4 +20,3 @@ Team:
 * Russell Saerang [@RussellDash332](https://github.com/RussellDash332)
 * Sean Gee Zhing [@pikasean](https://github.com/pikasean)
 * Terry Lim [@terrylimxc](https://github.com/terrylimxc)
-* Jonathan Chen [@cysjonathan](https://github.com/cysjonathan)
